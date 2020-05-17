@@ -9,6 +9,9 @@ sound device docs - https://python-sounddevice.readthedocs.io/en/latest/api/inde
 import argparse
 import logging
 
+import queue
+q = queue.Queue()
+
 
 def int_or_str(text):
     """Helper function for argument parsing."""
@@ -25,7 +28,7 @@ parser.add_argument('-i', '--input-device', type=int_or_str,
 parser.add_argument('-o', '--output-device', type=int_or_str,
                     help='output device ID or substring')
 # channels for stream call back function
-parser.add_argument('-c', '--channels', type=int, default=2,
+parser.add_argument('-c', '--channels', type=int, default=1, #changed from 2
                     help='number of channels')
 # types - float32, int32, int16, int8, uint8
 parser.add_argument('-t', '--dtype', default='float32', help='audio data type')
@@ -37,22 +40,37 @@ parser.add_argument('-b', '--blocksize', type=int, default=1024, help='block siz
 parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
 args = parser.parse_args()
 
+import sounddevice as sd
+
+def messWithQ(indata):
+    copy = []
+    dataSet = q.get_nowait()
+    for data in dataSet:
+        for d in data:
+            temp = []
+            temp.append(d-1)
+            copy.append(temp)
+    #print("dataSet: ", dataSet[0][0])
+    #print("copy: ", copy[0][0])
+    return copy 
+
+def callback(indata, outdata, frames, time, status):
+    """
+        indata(ndarray): input buffer
+        outdata(ndarray): output buffer
+
+        Call back for portaudio to periodically poll input and output channels. 
+        Currently this callback function simply forwards input to the output.
+    """
+    if status:
+        print(status)
+    # Can manipulate sound blocks here!!
+    q.put(indata)
+    print("indata: ", indata[0][0])
+    outdata[:] = messWithQ(q)
+    print("outdata: ", outdata[0][0])
+
 try:
-    import sounddevice as sd
-
-    def callback(indata, outdata, frames, time, status):
-        """
-            indata(ndarray): input buffer
-            outdata(ndarray): output buffer
-
-            Call back for portaudio to periodically poll input and output channels. 
-            Currently this callback function simply forwards input to the output.
-        """
-        if status:
-            print(status)
-        # Can manipulate sound blocks here!!
-        outdata[:] = indata
-
     with sd.Stream(device=(args.input_device, args.output_device),
                    samplerate=args.samplerate, blocksize=args.blocksize,
                    dtype=args.dtype, latency=args.latency,
