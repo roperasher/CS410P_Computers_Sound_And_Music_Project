@@ -34,18 +34,6 @@ parser.add_argument('-b', '--blocksize', type=int, default=1024, help='block siz
 parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
 args = parser.parse_args()
 
-'''
-def pitchbend(indata):
-    shift = 20 
-    left, right = indata[0::2], indata[1::2]  # left and right channe
-    lf, rf = np.fft.rfft(left), np.fft.rfft(right)
-    lf, rf = np.roll(lf, shift), np.roll(rf, shift)
-    lf[0:shift], rf[0:shift] = 0, 0
-    nl, nr = np.fft.irfft(lf), np.fft.irfft(rf)
-    ns = np.concatenate((nl, nr), axis=0)
-    return ns 
-'''
-
 def callback(indata, outdata, frames, time, status):
     """
         indata(ndarray): input buffer
