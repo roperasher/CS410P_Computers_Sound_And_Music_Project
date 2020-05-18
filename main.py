@@ -3,8 +3,18 @@
 #Jordan Co
 #Alexander Wallace
 
+import wire
+import profiles
+import globals 
+
 def main():
-  print("CS410 Project")
+  while (True):
+    print("Vocal profiles:")
+    print("1. No effect")
+    print("2. Pitch bend")
+    userInput = input("Enter a value: ")
+    globals.vocalProfile = int(userInput)
+    wire.startStream()
 
 if __name__ == "__main__":
   main()
