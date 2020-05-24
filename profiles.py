@@ -1,11 +1,17 @@
 import numpy as np
 import globals
+from pysndfx import AudioEffectsChain
+
+np.set_printoptions(threshold=30)
+
 
 def getModifiedSound(vocalProfile, indata):
   if vocalProfile == 1:
     return noEffect(indata)
   if vocalProfile == 2:
     return pitchbend(indata)
+  if vocalProfile == 3:
+    return testingPysndfx(indata)
 
 def noEffect(indata):
   return indata
@@ -19,3 +25,24 @@ def pitchbend(indata):
   nl, nr = np.fft.irfft(lf), np.fft.irfft(rf)
   ns = np.concatenate((nl, nr), axis=0)
   return ns 
+
+def testingPysndfx(indata):
+  fx = (
+    AudioEffectsChain()
+    .highshelf()
+    #.reverb()
+    #.phaser()
+    #.delay()
+    #.lowshelf()
+  )
+  outdata = fx(indata)
+  #print("indata type: ", type(indata))
+  #print("indata size: ", indata.size)
+  #print("input shape: ", indata.shape)
+  #print("indata: ", indata)
+  #print("outdata type: ", type(outdata))
+  #print("outdata size: ", outdata.size)
+  #print("outdata shape: ", outdata.shape)
+  #print("outdata: ", outdata)
+  outdata = np.stack((outdata[0], outdata[1]), axis=1)
+  return outdata 

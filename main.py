@@ -12,6 +12,7 @@ def main():
     print("Vocal profiles:")
     print("1. No effect")
     print("2. Pitch bend")
+    print("3. testingPysndfx")
     userInput = input("Enter a value: ")
     globals.vocalProfile = int(userInput)
     wire.startStream()

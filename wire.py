@@ -29,9 +29,9 @@ parser.add_argument('-t', '--dtype', default='int16', help='audio data type')
 # input output sampling frequency
 parser.add_argument('-s', '--samplerate', type=float, help='sampling rate')
 # number of frames passed to call back function
-parser.add_argument('-b', '--blocksize', type=int, default=1024, help='block size')
+parser.add_argument('-b', '--blocksize', type=int, default=2048, help='block size')
 # latency setting for i/o devices
-parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
+parser.add_argument('-l', '--latency', type=float, default=0, help='latency in seconds')
 args = parser.parse_args()
 
 def callback(indata, outdata, frames, time, status):
