@@ -27,7 +27,7 @@ parser.add_argument('-c', '--channels', type=int, default=2, help='number of cha
 # types - float32, int32, int16, int8, uint8
 parser.add_argument('-t', '--dtype', default='int16', help='audio data type')
 # input output sampling frequency
-parser.add_argument('-s', '--samplerate', type=float, help='sampling rate')
+parser.add_argument('-s', '--samplerate', type=int, default=44100, help='sampling rate')
 # number of frames passed to call back function
 parser.add_argument('-b', '--blocksize', type=int, default=2048, help='block size')
 # latency setting for i/o devices
