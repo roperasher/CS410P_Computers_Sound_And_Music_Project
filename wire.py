@@ -23,15 +23,15 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('-i', '--input-device', type=int_or_str, help='input device ID or substring')
 parser.add_argument('-o', '--output-device', type=int_or_str, help='output device ID or substring')
 # channels for stream call back function
-parser.add_argument('-c', '--channels', type=int, default=2, help='number of channels')
+parser.add_argument('-c', '--channels', type=int, default=1, help='number of channels')
 # types - float32, int32, int16, int8, uint8
 parser.add_argument('-t', '--dtype', default='int16', help='audio data type')
 # input output sampling frequency
-parser.add_argument('-s', '--samplerate', type=float, help='sampling rate')
+parser.add_argument('-s', '--samplerate', type=int, default=44100, help='sampling rate')
 # number of frames passed to call back function
-parser.add_argument('-b', '--blocksize', type=int, default=1024, help='block size')
+parser.add_argument('-b', '--blocksize', type=int, default=2048, help='block size')
 # latency setting for i/o devices
-parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
+parser.add_argument('-l', '--latency', type=float, default=0, help='latency in seconds')
 args = parser.parse_args()
 
 def callback(indata, outdata, frames, time, status):
