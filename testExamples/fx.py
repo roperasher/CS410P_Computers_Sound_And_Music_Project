@@ -13,7 +13,8 @@ fx = (
     AudioEffectsChain()
     #.highshelf()
     #.reverb()
-    #.phaser()
+    .phaser(decay=0.5, triangular=True)
+    .pitch(-1000)
     #.delay()
     #.lowshelf()
 )
@@ -27,7 +28,7 @@ def genTestWav():
     t = np.linspace(0, seconds, seconds * fs, False)
 
     # Generate a 440 Hz sine wave
-    note = np.sin(frequency * t * 2 * np.pi).astype(np.float32)
+    note = np.sin(frequency * t * 2 * np.pi).astype(np.int16)
     write('test.wav', fs, note)
 
 def recordTestWav():
@@ -35,7 +36,12 @@ def recordTestWav():
     seconds = 3  # Duration of recording
     
     print("***** RECORDING ******")
-    myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
+    myrecording = sd.rec(
+        int(seconds * fs), 
+        samplerate=fs, 
+        channels=1,
+        dtype=np.int16,
+        blocking=True)
     sd.wait()  # Wait until recording is finished
     write('voiceTest.wav', fs, myrecording)  # Save as WAV file 
 
@@ -57,7 +63,8 @@ def main():
     print('input shape: ', sample_data.shape)
     y = fx(sample_data)
    # print('top 20 of output: ', y[:20])
+    #y = np.swapaxes(y, 0, 1)
     print('output shape: ', y.shape)
-    write(outfile, 44100, y.T)
+    write(outfile, 44100, y)
 
 main()
