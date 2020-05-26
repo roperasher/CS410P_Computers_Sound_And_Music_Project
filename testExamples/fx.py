@@ -13,9 +13,9 @@ fx = (
     AudioEffectsChain()
     #.highshelf()
     #.reverb()
-    .phaser(decay=0.5, triangular=True)
-    .pitch(-1000)
-    #.delay()
+    #.phaser(decay=0.5, triangular=True)
+    #.pitch(-1000)
+    .delay()
     #.lowshelf()
 )
 

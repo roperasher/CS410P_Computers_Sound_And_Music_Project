@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('-i', '--input-device', type=int_or_str, help='input device ID or substring')
 parser.add_argument('-o', '--output-device', type=int_or_str, help='output device ID or substring')
 # channels for stream call back function
-parser.add_argument('-c', '--channels', type=int, default=2, help='number of channels')
+parser.add_argument('-c', '--channels', type=int, default=1, help='number of channels')
 # types - float32, int32, int16, int8, uint8
 parser.add_argument('-t', '--dtype', default='int16', help='audio data type')
 # input output sampling frequency
