@@ -11,7 +11,7 @@ import sounddevice as sd
 
 fx = (
     AudioEffectsChain()
-    .highshelf()
+    #.highshelf()
     #.reverb()
     #.phaser()
     #.delay()
@@ -33,7 +33,8 @@ def genTestWav():
 def recordTestWav():
     fs = 44100  # Sample rate
     seconds = 3  # Duration of recording
-
+    
+    print("***** RECORDING ******")
     myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
     sd.wait()  # Wait until recording is finished
     write('voiceTest.wav', fs, myrecording)  # Save as WAV file 
@@ -46,15 +47,17 @@ def main():
     #     genTestWav()
 
     # infile = 'test.wav' # float32
-    recordTestWav()
+
+    if (os.path.exists('voiceTest.wav')) is False:
+        recordTestWav()
     infile = 'voiceTest.wav'
     outfile = 'fx.wav'
     sample_rate, sample_data = read(infile)
 
     print('input shape: ', sample_data.shape)
     y = fx(sample_data)
-    print('top 20 of output: ', y[:20])
+   # print('top 20 of output: ', y[:20])
     print('output shape: ', y.shape)
-    write(outfile, 44100, y)
+    write(outfile, 44100, y.T)
 
 main()
