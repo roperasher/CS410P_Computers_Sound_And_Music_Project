@@ -9,6 +9,7 @@ import logging
 import numpy as np
 import sounddevice as sd
 import profiles
+from scipy.interpolate import interp1d
 import globals
 
 def int_or_str(text):
@@ -29,9 +30,9 @@ parser.add_argument('-t', '--dtype', default=np.int16, help='audio data type')
 # input output sampling frequency
 parser.add_argument('-s', '--samplerate', type=int, default=44100, help='sampling rate')
 # number of frames passed to call back function
-parser.add_argument('-b', '--blocksize', type=int, default=2048, help='block size')
+parser.add_argument('-b', '--blocksize', type=int, default=0, help='block size')
 # latency setting for i/o devices
-parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
+parser.add_argument('-l', '--latency', type=float, default=0.5, help='latency in seconds')
 args = parser.parse_args()
 
 def callback(indata, outdata, frames, time, status):
@@ -49,7 +50,11 @@ def callback(indata, outdata, frames, time, status):
     print(indata[:5])
     out = profiles.getModifiedSound(globals.vocalProfile, indata)
     print("~~outdata~~")
-    out = np.ravel(out, order='F').reshape(frames,1)
+    # combine L/R channels and reshape, (1024,2) --> (2048,1)
+    out = np.ravel(out, order='F').reshape(-1,1)[:frames]
+    
+    #TODO try using queue for blocks larger than block size, chop up into block size and pad zeros, enqueue. Dequeue chunk and set to outdata
+
     print(out.shape)
     print(out[:5])
     outdata[:] = out

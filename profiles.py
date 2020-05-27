@@ -27,14 +27,23 @@ def pitchbend(indata):
   return ns 
 
 def testingPysndfx(indata):
+
+  chorus1 = [50, 0.4, 0.25, 2, 't']
+  chorus2 = [60, 0.32, 0.4, 2.3, 't']
+  chorus3 = [40, 0.3, 0.3, 1.3, 's']
+  decays = list((chorus1, chorus2, chorus3))
+  print(type(decays))
   fx = (
     AudioEffectsChain()
+    .chorus(gain_in=0.8, gain_out=0.5, decays=decays)
+    .pitch(-300)
     #.highshelf()
     #.reverb()
-    #.phaser()
+    #.phaser(decay=0.5, triangular=True)
     #.delay()
     #.lowshelf()
   )
+  
   outdata = fx(indata)
   #print("indata type: ", type(indata))
   #print("indata size: ", indata.size)
