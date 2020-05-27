@@ -45,5 +45,5 @@ def testingPysndfx(indata):
   #print("outdata shape: ", outdata.shape)
   #print("outdata: ", outdata)
   #outdata = np.stack((outdata[0], outdata[1]), axis=1)
-  outdata = np.swapaxes(outdata, 0, 1)
+  #outdata = np.swapaxes(outdata, 0, 1)
   return outdata 
