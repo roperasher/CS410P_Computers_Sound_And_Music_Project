@@ -44,15 +44,15 @@ def callback(indata, outdata, frames, time, status):
     if status:
         print(status)
     # Can manipulate sound blocks here!!
-    print("~~indata~~")
-    print(indata.shape)
-    print(indata[:5])
-    out = profiles.getModifiedSound(globals.vocalProfile, indata)
-    print("~~outdata~~")
-    out = np.ravel(out, order='F').reshape(frames,1)
-    print(out.shape)
-    print(out[:5])
-    outdata[:] = out
+    #print("~~indata~~")
+    #print(indata.shape)
+    #print(indata[:5])
+    #out = profiles.getModifiedSound(globals.vocalProfile, indata)
+    #print("~~outdata~~")
+    #out = np.ravel(out, order='F').reshape(frames,1)
+    #print(out.shape)
+    #print(out[:5])
+    outdata[:] = profiles.getModifiedSound(globals.vocalProfile, indata)
 
 def startStream():
     try:
