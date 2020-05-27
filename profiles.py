@@ -25,24 +25,6 @@ def pitchbend(indata):
   return ns 
 
 def testingPysndfx(indata):
-  fx = (
-    AudioEffectsChain()
-    .pitch(-600)
-    #.highshelf()
-    #.reverb()
-    #.phaser()
-    #.delay()
-    #.lowshelf()
-  )
-  sineWave = fx(indata)
-  #print("indata type: ", type(indata))
-  #print("indata size: ", indata.size)
-  #print("input shape: ", indata.shape)
-  #print("indata: ", indata)
-  #print("outdata type: ", type(outdata))
-  #print("outdata size: ", outdata.size)
-  #print("outdata shape: ", outdata.shape)
-  #print("outdata: ", outdata)
-  #outdata = np.stack((outdata[0], outdata[1]), axis=1)
-  #outdata = np.swapaxes(outdata, 0, 1)
+  fx = (AudioEffectsChain().pitch(-600))
+  outdata = fxHandler.pitchHandler(fx(indata))
   return outdata 
