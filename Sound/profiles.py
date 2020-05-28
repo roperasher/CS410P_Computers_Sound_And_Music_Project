@@ -26,7 +26,7 @@ def pitchBendUp(indata):
 
 def pitchBendDown(indata):
   fx = (AudioEffectsChain()
-        .pitch(shift=-600, segment=82, search=14.68, overlap=12)
+        .pitch(shift=-300, segment=82, search=14.68, overlap=12)
        )
   modifiedSound = fx(indata)
   outdata = fxHandler.pitchHandler(modifiedSound)

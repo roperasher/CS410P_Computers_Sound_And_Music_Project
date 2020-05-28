@@ -1,8 +1,9 @@
 # reformats numpy array after running sine wave through a vocal effect
 
 import numpy as np
+import globals
 
-sampleRate = 4096
+sampleRate = 2048
 
 # reformat numpy array for pitch()
 def pitchHandler(sineWave):
