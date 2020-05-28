@@ -9,6 +9,7 @@ import logging
 import numpy as np
 import sounddevice as sd
 import profiles
+from scipy.interpolate import interp1d
 import globals
 
 def int_or_str(text):
@@ -31,7 +32,7 @@ parser.add_argument('-s', '--samplerate', type=int, default=44100, help='samplin
 # number of frames passed to call back function
 parser.add_argument('-b', '--blocksize', type=int, default=0, help='block size')
 # latency setting for i/o devices
-parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
+parser.add_argument('-l', '--latency', type=float, default=0.5, help='latency in seconds')
 args = parser.parse_args()
 
 # Can manipulate sound blocks here!!
@@ -44,26 +45,25 @@ def callback(indata, outdata, frames, time, status):
     """
     if status:
         print(status)
-    # run indata through vocal fx and output it in real time
-    outdata[:] = profiles.getModifiedSound(globals.vocalProfile, indata)
-    print("outdata size", outdata.size)
+    # Can manipulate sound blocks here!!
+    # print("~~indata~~")
+    # print(indata.shape)
+    # print(indata[:5])
+    out = profiles.getModifiedSound(globals.vocalProfile, indata)
+    # print("~~outdata~~")
+    # combine L/R channels and reshape, (1024,2) --> (2048,1)
+    out = np.ravel(out, order='F').reshape(-1,1)[:frames]
+    
+    #TODO try using queue for blocks larger than block size, chop up into block size and pad zeros, enqueue. Dequeue chunk and set to outdata
+
+    # print(out.shape)
+    # print(out[:5])
+    outdata[:] = out
 
 def startStream():
-    try:
-        with sd.Stream(device=(args.input_device, args.output_device),
-                    samplerate=args.samplerate, blocksize=args.blocksize,
-                    dtype=args.dtype, latency=args.latency,
-                    channels=args.channels, callback=callback):
-
-            print('#' * 80)
-            print('Vocal effects active!')
-            print('#' * 80)
-            print()
-            print('#' * 80)
-            print('press Return to select another vocal profile')
-            print('#' * 80)
-            input()
-    except KeyboardInterrupt:
-        parser.exit('\nInterrupted by user')
-    except Exception as e:
-        parser.exit(type(e).__name__ + ': ' + str(e))
+    stream = sd.Stream(device=(args.input_device, args.output_device), # "CABLE Input (VB-Audio Virtual C, MME"
+                samplerate=args.samplerate, blocksize=args.blocksize,
+                dtype=args.dtype, latency=args.latency,
+                channels=args.channels, callback=callback)
+    stream.start()
+    return stream
