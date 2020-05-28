@@ -12,6 +12,7 @@ from pprint import pprint
 
 
 window = Tk()
+stream = False
 
 
 	# userInput = input("Enter a value: ")
@@ -43,6 +44,8 @@ def select_item(event):
         global selected_item
         index = parts_list.curselection()[0]
         selected_item = parts_list.get(index)
+        print("Selected Profile: "+ selected_item)
+        globals.vocalProfile = index +1
 
         part_entry.delete(0, END)
         part_entry.insert(END, globals.profiles[selected_item][0])
@@ -68,6 +71,13 @@ def clear_text():
     part_entry.delete(0, END)
     customer_entry.delete(0, END)
 
+def toggle_stream():
+	global stream
+	if not stream:
+		stream = wire.startStream()
+	else:
+		stream.close()
+		stream = False
 # Part
 part_text = StringVar()
 part_label = Label(window, text='Pitch', font=('bold', 14), pady=20)
@@ -106,7 +116,7 @@ update_btn.grid(row=2, column=2)
 clear_btn = Button(window, text='Clear Input', width=12, command=clear_text)
 clear_btn.grid(row=2, column=3)
 
-stream_btn = Button(window, text='Start/stop', width=12, command=wire.startStream)
+stream_btn = Button(window, text='Start/stop', width=12, command=toggle_stream)
 stream_btn.grid(row=2, column=4)
 window.title("Vocal Boss")
 window.geometry("700x350")
