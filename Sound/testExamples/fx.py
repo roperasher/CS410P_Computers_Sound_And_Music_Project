@@ -14,8 +14,8 @@ fx = (
     #.highshelf()
     #.reverb()
     #.phaser(decay=0.5, triangular=True)
-    #.pitch(-1000)
-    .delay()
+    .pitch(-1000)
+    #.delay()
     #.lowshelf()
 )
 
@@ -61,10 +61,12 @@ def main():
     sample_rate, sample_data = read(infile)
 
     print('input shape: ', sample_data.shape)
+    print(sample_data[:10])
     y = fx(sample_data)
    # print('top 20 of output: ', y[:20])
     #y = np.swapaxes(y, 0, 1)
     print('output shape: ', y.shape)
+    print(y[:10])
     write(outfile, 44100, y)
 
 main()
