@@ -11,8 +11,9 @@ def main():
   while (True):
     print("Vocal profiles:")
     print("1. No effect")
-    print("2. Pitch bend")
-    print("3. testingPysndfx")
+    print("2. Pitch bend up")
+    print("3. Pitch bend down")
+    print("4. Chorus effect")
     userInput = input("Enter a value: ")
     globals.vocalProfile = int(userInput)
     wire.startStream()

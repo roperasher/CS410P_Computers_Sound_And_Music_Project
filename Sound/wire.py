@@ -31,7 +31,7 @@ parser.add_argument('-s', '--samplerate', type=int, default=44100, help='samplin
 # number of frames passed to call back function
 parser.add_argument('-b', '--blocksize', type=int, default=0, help='block size')
 # latency setting for i/o devices
-parser.add_argument('-l', '--latency', type=float, default=0.5, help='latency in seconds')
+parser.add_argument('-l', '--latency', type=float, default=1, help='latency in seconds')
 args = parser.parse_args()
 
 # Can manipulate sound blocks here!!
@@ -46,6 +46,7 @@ def callback(indata, outdata, frames, time, status):
         print(status)
     # run indata through vocal fx and output it in real time
     outdata[:] = profiles.getModifiedSound(globals.vocalProfile, indata)
+    print("outdata size", outdata.size)
 
 def startStream():
     try:
@@ -53,6 +54,11 @@ def startStream():
                     samplerate=args.samplerate, blocksize=args.blocksize,
                     dtype=args.dtype, latency=args.latency,
                     channels=args.channels, callback=callback):
+
+            print('#' * 80)
+            print('Vocal effects active!')
+            print('#' * 80)
+            print()
             print('#' * 80)
             print('press Return to select another vocal profile')
             print('#' * 80)
