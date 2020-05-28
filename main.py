@@ -6,16 +6,119 @@
 import wire
 import profiles
 import globals 
+from tkinter import *
+from tkinter import messagebox
+from pprint import pprint
+
+
+window = Tk()
+
+
+	# userInput = input("Enter a value: ")
+ #    globals.vocalProfile = int(userInput)
+ #    wire.startStream()
+
+
+
+def populate_list():
+	parts_list.delete(0, END)
+	for profile in globals.profiles.keys():
+		parts_list.insert(END, profile)
+
+
+def add_item():
+    if part_text.get() == '' or customer_text.get() == '':
+        messagebox.showerror('Required Fields', 'Please include all fields')
+        return
+    # db.insert(part_text.get(), customer_text.get(),
+    #           retailer_text.get(), price_text.get())
+    parts_list.delete(0, END)
+    parts_list.insert(END, (part_text.get(), customer_text.get()))
+    clear_text()
+    populate_list()
+
+
+def select_item(event):
+    try:
+        global selected_item
+        index = parts_list.curselection()[0]
+        selected_item = parts_list.get(index)
+
+        part_entry.delete(0, END)
+        part_entry.insert(END, globals.profiles[selected_item][0])
+        customer_entry.delete(0, END)
+        customer_entry.insert(END, globals.profiles[selected_item][1])
+    except IndexError:
+        pass
+
+
+def remove_item():
+    globals.profiles.remove(selected_item[0])
+    clear_text()
+    populate_list()
+
+
+def update_item():
+    # db.update(selected_item[0], part_text.get(), customer_text.get(),
+    #           retailer_text.get(), price_text.get())
+    populate_list()
+
+
+def clear_text():
+    part_entry.delete(0, END)
+    customer_entry.delete(0, END)
+
+# Part
+part_text = StringVar()
+part_label = Label(window, text='Pitch', font=('bold', 14), pady=20)
+part_label.grid(row=0, column=0, sticky=W)
+part_entry = Entry(window, textvariable=part_text)
+part_entry.grid(row=0, column=1)
+# Customer
+customer_text = StringVar()
+customer_label = Label(window, text='Other variable', font=('bold', 14))
+customer_label.grid(row=0, column=2, sticky=W)
+customer_entry = Entry(window, textvariable=customer_text)
+customer_entry.grid(row=0, column=3)
+
+# Parts List (Listbox)
+parts_list = Listbox(window, height=8, width=50, border=0)
+parts_list.grid(row=3, column=0, columnspan=3, rowspan=6, pady=20, padx=20)
+# Create scrollbar
+scrollbar = Scrollbar(window)
+scrollbar.grid(row=3, column=3)
+# Set scroll to listbox
+parts_list.configure(yscrollcommand=scrollbar.set)
+scrollbar.configure(command=parts_list.yview)
+# Bind select
+parts_list.bind('<<ListboxSelect>>', select_item)
+
+# Buttons
+add_btn = Button(window, text='Add New Profile', width=12, command=add_item)
+add_btn.grid(row=2, column=0, pady=20)
+
+remove_btn = Button(window, text='Remove Item', width=12, command=remove_item)
+remove_btn.grid(row=2, column=1)
+
+update_btn = Button(window, text='Update List', width=12, command=update_item)
+update_btn.grid(row=2, column=2)
+
+clear_btn = Button(window, text='Clear Input', width=12, command=clear_text)
+clear_btn.grid(row=2, column=3)
+
+stream_btn = Button(window, text='Start/stop', width=12, command=wire.startStream)
+stream_btn.grid(row=2, column=4)
+window.title("Vocal Boss")
+window.geometry("700x350")
+
+
+
+
+
 
 def main():
-  while (True):
-    print("Vocal profiles:")
-    print("1. No effect")
-    print("2. Pitch bend")
-    print("3. testingPysndfx")
-    userInput = input("Enter a value: ")
-    globals.vocalProfile = int(userInput)
-    wire.startStream()
+	update_item()
+	window.mainloop()
 
 if __name__ == "__main__":
-  main()
+	main()
