@@ -51,6 +51,10 @@ def select_item(event):
         part_entry.insert(END, globals.profiles[selected_item][0])
         customer_entry.delete(0, END)
         customer_entry.insert(END, globals.profiles[selected_item][1])
+
+        if stream:
+        	toggle_stream()
+        	toggle_stream()
     except IndexError:
         pass
 
@@ -78,6 +82,8 @@ def toggle_stream():
 	else:
 		stream.close()
 		stream = False
+	print(stream)
+	
 # Part
 part_text = StringVar()
 part_label = Label(window, text='Pitch', font=('bold', 14), pady=20)
