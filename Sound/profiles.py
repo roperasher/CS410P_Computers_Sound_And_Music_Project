@@ -1,17 +1,15 @@
 import numpy as np
-import globals
 from pysndfx import AudioEffectsChain
 import fxHandler
+import types
 
 def getModifiedSound(vocalProfile, indata):
-  if vocalProfile == 1:
-    return noEffect(indata)
-  if vocalProfile == 2:
-    return pitchBendUp(indata)
-  if vocalProfile == 3:
-    return pitchBendDown(indata)
-  if vocalProfile == 4:
-    return chorusEffect(indata)
+  funcs = []
+  for key, value in __import__(__name__).__dict__.items():
+      if type(value) is types.FunctionType:
+        funcs.append(value)
+  return funcs[vocalProfile](indata)
+
 
 def noEffect(indata):
   return indata
