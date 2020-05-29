@@ -8,7 +8,7 @@ import profiles
 import globals 
 from tkinter import *
 from tkinter import messagebox
-from pprint import pprint
+import types
 
 
 window = Tk()
@@ -31,12 +31,20 @@ def add_item():
     if part_text.get() == '' or customer_text.get() == '':
         messagebox.showerror('Required Fields', 'Please include all fields')
         return
-    # db.insert(part_text.get(), customer_text.get(),
-    #           retailer_text.get(), price_text.get())
+    globals.profiles[selected_item] = [part_text.get(),customer_text.get()]
     parts_list.delete(0, END)
     parts_list.insert(END, (part_text.get(), customer_text.get()))
     clear_text()
     populate_list()
+
+def startUp():
+    for fun in getFunctions(profiles)[1:]:
+        global selected_item
+        selected_item = str(fun).split(' ')[1]
+        part_entry.insert(END, 0)
+        customer_entry.insert(END, 0)
+        add_item()
+    update_item()
 
 
 def select_item(event):
@@ -70,6 +78,12 @@ def update_item():
     #           retailer_text.get(), price_text.get())
     populate_list()
 
+def getFunctions(module):
+    funcs = []
+    for key, value in module.__dict__.items():
+        if type(value) is types.FunctionType:
+            funcs.append(value)
+    return funcs
 
 def clear_text():
     part_entry.delete(0, END)
@@ -133,8 +147,8 @@ window.geometry("700x350")
 
 
 def main():
-	update_item()
-	window.mainloop()
+    startUp()
+    window.mainloop()
 
 if __name__ == "__main__":
 	main()
