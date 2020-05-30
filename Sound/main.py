@@ -10,22 +10,13 @@ from tkinter import *
 from tkinter import messagebox
 import types
 
-
 window = Tk()
 stream = False
-
-
-	# userInput = input("Enter a value: ")
- #    globals.vocalProfile = int(userInput)
- #    wire.startStream()
-
-
 
 def populate_list():
 	parts_list.delete(0, END)
 	for profile in globals.profiles.keys():
 		parts_list.insert(END, profile)
-
 
 def add_item():
     if part_text.get() == '' or customer_text.get() == '':
@@ -46,7 +37,6 @@ def startUp():
         add_item()
     update_item()
 
-
 def select_item(event):
     try:
         global selected_item
@@ -66,12 +56,10 @@ def select_item(event):
     except IndexError:
         pass
 
-
 def remove_item():
     globals.profiles.remove(selected_item[0])
     clear_text()
     populate_list()
-
 
 def update_item():
     # db.update(selected_item[0], part_text.get(), customer_text.get(),
@@ -140,11 +128,6 @@ stream_btn = Button(window, text='Start/stop', width=12, command=toggle_stream)
 stream_btn.grid(row=2, column=4)
 window.title("Vocal Boss")
 window.geometry("700x350")
-
-
-
-
-
 
 def main():
     startUp()

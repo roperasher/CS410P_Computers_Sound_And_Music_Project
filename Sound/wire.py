@@ -45,20 +45,22 @@ def callback(indata, outdata, frames, time, status):
     """
     if status:
         print(status)
+    #TODO try using queue for blocks larger than block size, chop up into block size and pad zeros, enqueue. Dequeue chunk and set to outdata
+    outdata[:] = profiles.getModifiedSound(globals.vocalProfile, indata)
+    # commented this out since numpy array reshaping happens within each function in profiles.py
+    '''
     # Can manipulate sound blocks here!!
     # print("~~indata~~")
     # print(indata.shape)
     # print(indata[:5])
-    out = profiles.getModifiedSound(globals.vocalProfile, indata)
+    #out = profiles.getModifiedSound(globals.vocalProfile, indata)
     # print("~~outdata~~")
     # combine L/R channels and reshape, (1024,2) --> (2048,1)
-    out = np.ravel(out, order='F').reshape(-1,1)[:frames]
-    
-    #TODO try using queue for blocks larger than block size, chop up into block size and pad zeros, enqueue. Dequeue chunk and set to outdata
-
+    #out = np.ravel(out, order='F').reshape(-1,1)[:frames]
     # print(out.shape)
     # print(out[:5])
-    outdata[:] = out
+    #outdata[:] = out
+    '''
 
 def startStream():
     stream = sd.Stream(device=(args.input_device, args.output_device), # "CABLE Input (VB-Audio Virtual C, MME"
