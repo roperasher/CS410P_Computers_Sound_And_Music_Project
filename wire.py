@@ -10,6 +10,7 @@ import numpy as np
 import sounddevice as sd
 import profiles
 from scipy.interpolate import interp1d
+import queue
 import globals
 
 def int_or_str(text):
@@ -35,6 +36,19 @@ parser.add_argument('-b', '--blocksize', type=int, default=0, help='block size')
 parser.add_argument('-l', '--latency', type=float, default=0.5, help='latency in seconds')
 args = parser.parse_args()
 
+q = queue.Queue()
+
+def chopAndEnqueue(data, outdata, frames):
+    # Shit don't work
+    padding = frames - (data.size % frames)
+    padded = np.pad(data, (0,padding), 'constant')
+    reshaped = padded.reshape(padded.size//frames, frames)
+
+    for arr in reshaped:
+        outdata[:] = arr
+        q.put_nowait(arr)
+    
+#TODO try using separate Input Stream and Output Stream instead Stream object.
 def callback(indata, outdata, frames, time, status):
     """
         indata(ndarray): input buffer
@@ -44,20 +58,48 @@ def callback(indata, outdata, frames, time, status):
     """
     if status:
         print(status)
-    # Can manipulate sound blocks here!!
+
+    print("frames: ", frames)
     print("~~indata~~")
     print(indata.shape)
-    print(indata[:5])
-    out = profiles.getModifiedSound(globals.vocalProfile, indata)
-    print("~~outdata~~")
-    # combine L/R channels and reshape, (1024,2) --> (2048,1)
-    out = np.ravel(out, order='F').reshape(-1,1)[:frames]
-    
-    #TODO try using queue for blocks larger than block size, chop up into block size and pad zeros, enqueue. Dequeue chunk and set to outdata
+    data = profiles.getModifiedSound(globals.vocalProfile, indata)
+    print("data shape: ", data.shape)
+    data = np.ravel(data, order='F').reshape(-1,1)
+    print("after ravel: ", data.shape)
 
-    print(out.shape)
-    print(out[:5])
-    outdata[:] = out
+    size = data.size
+    print("Size: ", size)
+
+# SHIT DON"T WORK
+    if size == frames:
+        outdata[:] = data
+    elif size > frames:
+        print("*** Data size is larger than frame size ****")
+        padding = frames - (size % frames)
+        print("padding: ", padding)
+        print("data shape: ", data.shape)
+        data = np.pad(data, (0,padding), 'constant')
+        reshaped = data.reshape(data.size//frames, frames)
+        for arr in reshaped:
+            outdata[:] = arr.reshape(-1,1)
+
+            print("~~outdata~~")
+            print(outdata.shape)
+    else:
+        print("*** Data size is smaller than frame size ****")
+        data = np.pad(data, (0, frames - size), 'constant')
+        outdata[:] = data
+        
+    #chopAndEnqueue(data, outdata, frames)
+
+    # if(q.empty()):
+    #     outdata.fill(0)
+    # else:
+    #     outdata[:] = q.get_nowait().reshape(-1,1)
+
+    # print("~~outdata~~")
+    # print(outdata.shape)
+
 
 def startStream():
     try:
@@ -73,3 +115,6 @@ def startStream():
         parser.exit('\nInterrupted by user')
     except Exception as e:
         parser.exit(type(e).__name__ + ': ' + str(e))
+
+if __name__ == '__main__':
+    startStream()

@@ -31,12 +31,12 @@ def testingPysndfx(indata):
   chorus1 = [50, 0.4, 0.25, 2, 't']
   chorus2 = [60, 0.32, 0.4, 2.3, 't']
   chorus3 = [40, 0.3, 0.3, 1.3, 's']
+  chorus4 = [80, 0.3, 0.3, 1.3, 's']
   decays = list((chorus1, chorus2, chorus3))
-  print(type(decays))
   fx = (
     AudioEffectsChain()
     .chorus(gain_in=0.8, gain_out=0.5, decays=decays)
-    .pitch(-300)
+    #.pitch(-300)
     #.highshelf()
     #.reverb()
     #.phaser(decay=0.5, triangular=True)
@@ -55,4 +55,4 @@ def testingPysndfx(indata):
   #print("outdata: ", outdata)
   #outdata = np.stack((outdata[0], outdata[1]), axis=1)
   #outdata = np.swapaxes(outdata, 0, 1)
-  return outdata 
+  return outdata
