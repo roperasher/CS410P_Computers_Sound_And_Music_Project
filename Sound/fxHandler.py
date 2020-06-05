@@ -20,6 +20,7 @@ Change:
 
 # reformat numpy array for pitch()
 def pitchHandler(sineWave):
+  return sineWave
   return np.ravel(sineWave, order='F').reshape(-1, 1)[:sampleRate]
 
 # reformat numpy array for overdrive()

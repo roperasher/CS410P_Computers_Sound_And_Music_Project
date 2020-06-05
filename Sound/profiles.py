@@ -24,7 +24,7 @@ def Chipmunk(indata):
 def ChipmunkSingle(indata):
   fx = (AudioEffectsChain()
           .pitch(shift=1000, segment=82, search=14.68, overlap=12)
-       )(None,None,channels_out=1)
+       (None,None,channels_out=1))
   modifiedSound = fx(indata)
   #outdata = fxHandler.pitchHandler(modifiedSound)
   return modifiedSound
@@ -33,7 +33,7 @@ def SpaceMan(indata):
   fx = (AudioEffectsChain()
         .pitch(shift=150, segment=82, search=14.68, overlap=12)
         .phaser(gain_in=0.6, gain_out=0.8, delay=2, decay=0.75, triangular=True)
-       )(None,None,channels_out=1)
+       (None,None,channels_out=1))
   modifiedSound = fx(indata)
   #outdata = fxHandler.pitchHandler(modifiedSound)
   return modifiedSound 
@@ -49,7 +49,7 @@ def Evil(indata):
 def EvilSingle(indata):
   fx = (AudioEffectsChain()
         .pitch(shift=-500, segment=82, search=14.68, overlap=12)
-       )(None,None,channels_out=1)
+       (None,None,channels_out=1))
   modifiedSound = fx(indata)
   #outdata = fxHandler.pitchHandler(modifiedSound)
   return modifiedSound 
@@ -65,7 +65,7 @@ def Megaphone(indata):
 def MegaphoneSingle(indata):
   fx = (AudioEffectsChain()
         .overdrive(gain=37, colour=1)        
-        )(None,None,channels_out=1)
+        (None,None,channels_out=1))
   modifiedSound = fx(indata)
   return modifiedSound 
 
@@ -86,7 +86,7 @@ def Chorus_Not_Currently_Working(indata):
   decays = list((chorus1, chorus2, chorus3))
   fx = (AudioEffectsChain()
         .chorus(gain_in=0.8, gain_out=0.5, decays=decays)
-       )(None,None,channels_out=1)
+       (None,None,channels_out=1))
   modifiedSound = fx(indata)
   outdata = fxHandler.chorusHandler(modifiedSound)
   return outdata
