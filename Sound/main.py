@@ -9,6 +9,7 @@ import globals
 from tkinter import *
 from tkinter import messagebox
 import types
+import sounddevice as sd
 
 window = Tk()
 stream = False
@@ -17,6 +18,18 @@ def populate_list():
 	parts_list.delete(0, END)
 	for profile in globals.profiles.keys():
 		parts_list.insert(END, profile)
+
+def populate_speaker():
+    speaker_list.delete(0,END)
+    for speaker in sd.query_devices():
+        if speaker['max_output_channels'] > 0:
+            speaker_list.insert(END, speaker['name'])
+
+def populate_mic():
+    mic_list.delete(0,END)
+    for mic in sd.query_devices():
+        if mic['max_input_channels'] > 0:
+            mic_list.insert(END, mic['name'])
 
 def add_item():
     if part_text.get() == '' or customer_text.get() == '':
@@ -29,6 +42,9 @@ def add_item():
     populate_list()
 
 def startUp():
+    globals.mic = sd.query_devices(kind='input')['name']
+    globals.speaker = sd.query_devices(kind='output')['name']
+
     for fun in getFunctions(profiles)[1:]:
         global selected_item
         selected_item = str(fun).split(' ')[1]
@@ -50,9 +66,27 @@ def select_item(event):
         customer_entry.delete(0, END)
         customer_entry.insert(END, globals.profiles[selected_item][1])
 
-        if stream:
-        	toggle_stream()
-        	toggle_stream()
+        restart_stream()
+    except IndexError:
+        pass
+
+def select_mic(event):
+    try:
+        global selected_mic
+        index = mic_list.curselection()[0]
+        selected_mic = mic_list.get(index)
+        globals.mic = selected_mic
+        restart_stream()
+    except IndexError:
+        pass
+
+def select_speaker(event):
+    try:
+        global selected_speaker
+        index = speaker_list.curselection()[0]
+        selected_speaker = speaker_list.get(index)
+        globals.speaker = selected_speaker
+        restart_stream()
     except IndexError:
         pass
 
@@ -65,6 +99,8 @@ def update_item():
     # db.update(selected_item[0], part_text.get(), customer_text.get(),
     #           retailer_text.get(), price_text.get())
     populate_list()
+    populate_mic()
+    populate_speaker()
 
 def getFunctions(module):
     funcs = []
@@ -85,6 +121,12 @@ def toggle_stream():
 		stream.close()
 		stream = False
 	print(stream)
+
+def restart_stream():
+    global stream
+    if stream:
+        toggle_stream()
+        toggle_stream()
 	
 # Part
 part_text = StringVar()
@@ -100,20 +142,30 @@ customer_entry = Entry(window, textvariable=customer_text)
 customer_entry.grid(row=0, column=3)
 
 # Parts List (Listbox)
-parts_list = Listbox(window, height=8, width=50, border=0)
+parts_list = Listbox(window, height=8, width=40, border=0)
 parts_list.grid(row=3, column=0, columnspan=3, rowspan=6, pady=20, padx=20)
 # Create scrollbar
 scrollbar = Scrollbar(window)
-scrollbar.grid(row=3, column=3)
+scrollbar.grid(row=3, column=2, rowspan=6)
 # Set scroll to listbox
 parts_list.configure(yscrollcommand=scrollbar.set)
 scrollbar.configure(command=parts_list.yview)
 # Bind select
 parts_list.bind('<<ListboxSelect>>', select_item)
 
+# Mic and Speaker Select
+mic_list = Listbox(window, height=4, width=50, border=0)
+mic_list.grid(row=3, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
+speaker_list = Listbox(window, height=4, width=50, border=0)
+speaker_list.grid(row=4, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
+scrollbar = Scrollbar(window)
+
+mic_list.bind('<<ListboxSelect>>', select_mic)
+speaker_list.bind('<<ListboxSelect>>', select_speaker)
+
 # Buttons
 add_btn = Button(window, text='Add New Profile', width=12, command=add_item)
-add_btn.grid(row=2, column=0, pady=20)
+add_btn.grid(row=2, column=0, pady=20, padx=5)
 
 remove_btn = Button(window, text='Remove Item', width=12, command=remove_item)
 remove_btn.grid(row=2, column=1)

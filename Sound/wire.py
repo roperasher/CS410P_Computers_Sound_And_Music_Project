@@ -63,7 +63,7 @@ def callback(indata, outdata, frames, time, status):
     '''
 
 def startStream():
-    stream = sd.Stream(device=(args.input_device, args.output_device), # "CABLE Input (VB-Audio Virtual C, MME"
+    stream = sd.Stream(device=(globals.mic, globals.speaker), # "CABLE Input (VB-Audio Virtual C, MME"
                 samplerate=args.samplerate, blocksize=args.blocksize,
                 dtype=args.dtype, latency=args.latency,
                 channels=args.channels, callback=callback)
