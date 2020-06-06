@@ -98,7 +98,7 @@ def select_speaker(event):
         pass
 
 def remove_item():
-    globals.profiles.remove(vocalProfile)
+    globals.profiles.remove(globals.vocalProfile)
     clear_text()
     populate_list()
 
