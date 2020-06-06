@@ -77,18 +77,12 @@ def Chorus_Not_Currently_Working(indata):
   outdata = fx(indata)
   return outdata
 
-'''
 def cave(indata):
   fx = (AudioEffectsChain()
         .delay(gain_in=0.8, gain_out=0.5, delays=list((1000, 1800)), decays=list((0.3, 0.25)), parallel=False)
+        (None, None, channels_out=1)
        )
-  modifiedSound = fx(indata)
-  print("modified sound size: ", modifiedSound.size)
-  print("modified sound shape: ", modifiedSound.shape)
-  outdata = fxHandler.pitchHandler(modifiedSound)
-  print("outdata size: ", outdata.size)
-  print("outdata shape: ", outdata.shape)
-  return modifiedSound 
-'''
+  outdata = fx(indata)
+  return outdata 
 
 
