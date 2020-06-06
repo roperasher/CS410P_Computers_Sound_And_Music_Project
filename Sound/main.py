@@ -15,9 +15,9 @@ window = Tk()
 stream = False
 
 def populate_list():
-	parts_list.delete(0, END)
-	for profile in globals.profiles.keys():
-		parts_list.insert(END, profile)
+	effects_list.delete(0, END)
+	for profile in globals.profiles:
+		effects_list.insert(END, profile[2])
 
 def populate_speaker():
     speaker_list.delete(0,END)
@@ -32,39 +32,46 @@ def populate_mic():
             mic_list.insert(END, mic['name'])
 
 def add_item():
-    if part_text.get() == '' or customer_text.get() == '':
-        messagebox.showerror('Required Fields', 'Please include all fields')
+    funcs = [str(i).split(' ')[1] for i in getFunctions(profiles)[1:]]
+    print(funcs)
+    print(selected_item.replace("Default: ",""))
+    if arg1_text.get() == '' or arg2_text.get() == '' or selected_item.replace("Default: ","") not in funcs:
+        messagebox.showerror('ERROR', 'Please include all fields and make sure to select a default effect to edit')
         return
-    globals.profiles[selected_item] = [part_text.get(),customer_text.get()]
-    parts_list.delete(0, END)
-    parts_list.insert(END, (part_text.get(), customer_text.get()))
+    globals.profiles.append([arg1_text.get(),arg2_text.get(),name_text.get(),selected_item.replace("Default: ","")])
+    effects_list.delete(0, END)
+    effects_list.insert(END, (arg1_text.get(), arg2_text.get()))
     clear_text()
     populate_list()
 
 def startUp():
+    global selected_item
     globals.mic = sd.query_devices(kind='input')['name']
     globals.speaker = sd.query_devices(kind='output')['name']
 
     for fun in getFunctions(profiles)[1:]:
-        global selected_item
+        name_entry.insert(END, "Default: "+str(fun).split(' ')[1])
         selected_item = str(fun).split(' ')[1]
-        part_entry.insert(END, 0)
-        customer_entry.insert(END, 0)
+        arg1_entry.insert(END, 0)
+        arg2_entry.insert(END, 0)
+
         add_item()
     update_item()
 
 def select_item(event):
     try:
         global selected_item
-        index = parts_list.curselection()[0]
-        selected_item = parts_list.get(index)
+        index = effects_list.curselection()[0]
+        selected_item = effects_list.get(index)
         print("Selected Profile: "+ selected_item)
         globals.vocalProfile = index +1
 
-        part_entry.delete(0, END)
-        part_entry.insert(END, globals.profiles[selected_item][0])
-        customer_entry.delete(0, END)
-        customer_entry.insert(END, globals.profiles[selected_item][1])
+        arg1_entry.delete(0, END)
+        arg1_entry.insert(END, globals.profiles[index][0])
+        arg2_entry.delete(0, END)
+        arg2_entry.insert(END, globals.profiles[index][1])
+        name_entry.delete(0, END)
+        name_entry.insert(END, selected_item)
 
         restart_stream()
     except IndexError:
@@ -91,13 +98,11 @@ def select_speaker(event):
         pass
 
 def remove_item():
-    globals.profiles.remove(selected_item[0])
+    globals.profiles.remove(vocalProfile)
     clear_text()
     populate_list()
 
 def update_item():
-    # db.update(selected_item[0], part_text.get(), customer_text.get(),
-    #           retailer_text.get(), price_text.get())
     populate_list()
     populate_mic()
     populate_speaker()
@@ -110,8 +115,9 @@ def getFunctions(module):
     return funcs
 
 def clear_text():
-    part_entry.delete(0, END)
-    customer_entry.delete(0, END)
+    arg1_entry.delete(0, END)
+    arg2_entry.delete(0, END)
+    name_entry.delete(0, END)
 
 def toggle_stream():
 	global stream
@@ -128,40 +134,55 @@ def restart_stream():
         toggle_stream()
         toggle_stream()
 	
-# Part
-part_text = StringVar()
-part_label = Label(window, text='Pitch', font=('bold', 14), pady=20)
-part_label.grid(row=0, column=0, sticky=W)
-part_entry = Entry(window, textvariable=part_text)
-part_entry.grid(row=0, column=1)
-# Customer
-customer_text = StringVar()
-customer_label = Label(window, text='Other variable', font=('bold', 14))
-customer_label.grid(row=0, column=2, sticky=W)
-customer_entry = Entry(window, textvariable=customer_text)
-customer_entry.grid(row=0, column=3)
+# arg1 text
+arg1_text = StringVar()
+arg1_label = Label(window, text='Level (1-10):', font=('bold', 14), pady=20, padx=20)
+arg1_label.grid(row=0, column=0, sticky=W)
+arg1_entry = Entry(window, textvariable=arg1_text)
+arg1_entry.grid(row=0, column=1)
+# arg2 text
+arg2_text = StringVar()
+arg2_label = Label(window, text='Other variable:', font=('bold', 14),padx=20)
+arg2_label.grid(row=0, column=2, sticky=W)
+arg2_entry = Entry(window, textvariable=arg2_text)
+arg2_entry.grid(row=0, column=3)
 
-# Parts List (Listbox)
-parts_list = Listbox(window, height=8, width=40, border=0)
-parts_list.grid(row=3, column=0, columnspan=3, rowspan=6, pady=20, padx=20)
-# Create scrollbar
+# name text
+name_text = StringVar()
+name_label = Label(window, text='Effect Name:', font=('bold', 14),padx=20)
+name_label.grid(row=1, column=0, sticky=W)
+name_entry = Entry(window, textvariable=name_text)
+name_entry.grid(row=1, column=1)
+
+# Effects List
+effects_list = Listbox(window, height=8, width=40, border=0)
+effects_list.grid(row=4, column=0, columnspan=3, rowspan=6, pady=20, padx=20)
+
 scrollbar = Scrollbar(window)
 scrollbar.grid(row=3, column=2, rowspan=6)
-# Set scroll to listbox
-parts_list.configure(yscrollcommand=scrollbar.set)
-scrollbar.configure(command=parts_list.yview)
-# Bind select
-parts_list.bind('<<ListboxSelect>>', select_item)
+
+effects_list.configure(yscrollcommand=scrollbar.set)
+scrollbar.configure(command=effects_list.yview)
+
+effects_list.bind('<<ListboxSelect>>', select_item)
 
 # Mic and Speaker Select
 mic_list = Listbox(window, height=4, width=50, border=0)
-mic_list.grid(row=3, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
+mic_list.grid(row=4, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
 speaker_list = Listbox(window, height=4, width=50, border=0)
-speaker_list.grid(row=4, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
+speaker_list.grid(row=6, column=3, columnspan=3, rowspan=1, pady=5, padx=15)
 scrollbar = Scrollbar(window)
 
 mic_list.bind('<<ListboxSelect>>', select_mic)
 speaker_list.bind('<<ListboxSelect>>', select_speaker)
+
+# Labels 
+effect_label = Label(window, text='Effects', font=('bold', 14), padx=20)
+effect_label.grid(row=3, column=0, sticky=W)
+mic_label = Label(window, text='Microphone:', font=('bold', 14))
+mic_label.grid(row=3, column=3, sticky=W)
+speaker_label = Label(window, text='Speaker:', font=('bold', 14))
+speaker_label.grid(row=5, column=3, sticky=W)
 
 # Buttons
 add_btn = Button(window, text='Add New Profile', width=12, command=add_item)
@@ -179,7 +200,7 @@ clear_btn.grid(row=2, column=3)
 stream_btn = Button(window, text='Start/stop', width=12, command=toggle_stream)
 stream_btn.grid(row=2, column=4)
 window.title("Vocal Boss")
-window.geometry("700x350")
+window.geometry("775x375")
 
 def main():
     startUp()

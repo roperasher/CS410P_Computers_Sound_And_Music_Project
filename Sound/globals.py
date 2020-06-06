@@ -1,5 +1,5 @@
 vocalProfile = 1
-profiles = {}
+profiles = []
 sr = 0
 mic = ""
 speaker = ""

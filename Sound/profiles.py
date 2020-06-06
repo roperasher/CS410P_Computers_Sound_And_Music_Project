@@ -2,28 +2,37 @@ import numpy as np
 from pysndfx import AudioEffectsChain
 import fxHandler
 import types
+import globals
 
 def getModifiedSound(vocalProfile, indata):
   funcs = []
   for key, value in __import__(__name__).__dict__.items():
       if type(value) is types.FunctionType:
         funcs.append(value)
-  return funcs[vocalProfile](indata)
+  for fun in funcs:
+    if globals.profiles[vocalProfile-1][3] == str(fun).split(' ')[1]:
+      return fun(indata)
 
 def No_Effect(indata):
   return indata
 
 def Chipmunk(indata):
+  default = int(globals.profiles[globals.vocalProfile-1][0])
+  if default == 0:
+    default = 5
   fx = (AudioEffectsChain()
-          .pitch(shift=1000, segment=82, search=14.68, overlap=12)
+          .pitch(shift=(default * 200), segment=82, search=14.68, overlap=12)
        )
   modifiedSound = fx(indata)
   outdata = fxHandler.pitchHandler(modifiedSound)
   return outdata
 
 def Evil(indata):
+  default = int(globals.profiles[globals.vocalProfile-1][0])
+  if default == 0:
+    default = 5
   fx = (AudioEffectsChain()
-        .pitch(shift=-500, segment=82, search=14.68, overlap=12)
+        .pitch(shift=(default * -100), segment=82, search=14.68, overlap=12)
        )
   modifiedSound = fx(indata)
   outdata = fxHandler.pitchHandler(modifiedSound)
