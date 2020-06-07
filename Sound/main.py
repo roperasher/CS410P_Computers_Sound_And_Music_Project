@@ -3,6 +3,8 @@
 #Jordan Co
 #Alexander Wallace
 
+import os
+import psutil
 import wire
 import profiles
 import globals 
@@ -120,20 +122,37 @@ def clear_text():
     name_entry.delete(0, END)
 
 def toggle_stream():
-	global stream
-	if not stream:
-		stream = wire.startStream()
-	else:
-		stream.close()
-		stream = False
-	print(stream)
+    global stream
+    if not stream:
+        stream = wire.startStream()
+        globals.firstTime = False
+    else:
+        stream.close()
+        stream = False
+    print(stream)
 
 def restart_stream():
     global stream
     if stream:
         toggle_stream()
         toggle_stream()
-	
+
+def breakout():
+    for proc in psutil.process_iter():
+        #print(proc)
+        try:
+            # Check if process name contains the given name string.
+            if "sox" in proc.name().lower():
+                print("proc: ", proc.pid)
+                os.kill(proc.pid, 9)
+                return print("Killed process with PID: ", proc.pid) 
+        except(psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return print("No process with cmd that begins with 'sox'") 
+
+def helloworld():
+    print("helloworld")
+
 # arg1 text
 arg1_text = StringVar()
 arg1_label = Label(window, text='Level (1-10):', font=('bold', 14), pady=20, padx=20)
@@ -199,6 +218,13 @@ clear_btn.grid(row=2, column=3)
 
 stream_btn = Button(window, text='Start/stop', width=12, command=toggle_stream)
 stream_btn.grid(row=2, column=4)
+
+break_button = Button(window, text= 'Break', width=12, command=breakout)
+break_button.grid(row=2, column=5)
+
+hello_btn = Button(window, text='hello', width=12, command=helloworld)
+hello_btn.grid(row=2, column=6)
+
 window.title("Vocal Boss")
 window.geometry("775x375")
 
