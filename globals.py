@@ -3,3 +3,4 @@ profiles = []
 sr = 0
 mic = ""
 speaker = ""
+running = False 

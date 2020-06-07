@@ -5,8 +5,8 @@
 
 import os
 import psutil
-import wire
 import profiles
+import threading
 import globals 
 from tkinter import *
 from tkinter import messagebox
@@ -14,7 +14,6 @@ import types
 import sounddevice as sd
 
 window = Tk()
-running = False
 
 def populate_list():
 	effects_list.delete(0, END)
@@ -122,33 +121,32 @@ def clear_text():
     name_entry.delete(0, END)
 
 def toggle_stream():
-    global running
-    if not stream:
+    if not globals.running:
+        globals.running = True
         profiles.getModifiedSound(globals.vocalProfile)
     else:
         breakout()
 
 def restart_stream():
-    global running
-    if running:
+    #global globals.running
+    if globals.running:
         toggle_stream()
         toggle_stream()
 
 def breakout():
+    print("in breakout")
     for proc in psutil.process_iter():
-        #print(proc)
         try:
             # Check if process name contains the given name string.
             if "sox" in proc.name().lower():
                 print("proc: ", proc.pid)
                 os.kill(proc.pid, 9)
+                globals.running = False
                 return print("Killed process with PID: ", proc.pid) 
         except(psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    return print("No process with cmd that begins with 'sox'") 
-
-def helloworld():
-    print("helloworld")
+    globals.running = False
+    return print("No process with cmd that begins with 'sox'")
 
 # arg1 text
 arg1_text = StringVar()
@@ -215,12 +213,6 @@ clear_btn.grid(row=2, column=3)
 
 stream_btn = Button(window, text='Start/stop', width=12, command=toggle_stream)
 stream_btn.grid(row=2, column=4)
-
-break_button = Button(window, text= 'Break', width=12, command=breakout)
-break_button.grid(row=2, column=5)
-
-hello_btn = Button(window, text='hello', width=12, command=helloworld)
-hello_btn.grid(row=2, column=6)
 
 window.title("Vocal Boss")
 window.geometry("775x375")
