@@ -14,7 +14,7 @@ import types
 import sounddevice as sd
 
 window = Tk()
-stream = False
+running = False
 
 def populate_list():
 	effects_list.delete(0, END)
@@ -85,7 +85,7 @@ def select_mic(event):
         index = mic_list.curselection()[0]
         selected_mic = mic_list.get(index)
         globals.mic = selected_mic
-        restart_stream()
+        # restart_stream()
     except IndexError:
         pass
 
@@ -95,7 +95,7 @@ def select_speaker(event):
         index = speaker_list.curselection()[0]
         selected_speaker = speaker_list.get(index)
         globals.speaker = selected_speaker
-        restart_stream()
+        # restart_stream()
     except IndexError:
         pass
 
@@ -122,18 +122,15 @@ def clear_text():
     name_entry.delete(0, END)
 
 def toggle_stream():
-    global stream
+    global running
     if not stream:
-        stream = wire.startStream()
-        globals.firstTime = False
+        profiles.getModifiedSound(globals.vocalProfile)
     else:
-        stream.close()
-        stream = False
-    print(stream)
+        breakout()
 
 def restart_stream():
-    global stream
-    if stream:
+    global running
+    if running:
         toggle_stream()
         toggle_stream()
 
