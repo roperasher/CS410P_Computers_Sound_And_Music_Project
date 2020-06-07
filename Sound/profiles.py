@@ -3,6 +3,12 @@ from pysndfx import AudioEffectsChain
 import fxHandler
 import types
 
+global fx
+
+def deleteFx():
+  global fx
+  fx = None 
+
 def getModifiedSound(vocalProfile, indata):
   funcs = []
   for key, value in __import__(__name__).__dict__.items():
@@ -14,6 +20,7 @@ def No_Effect(indata):
   return indata
 
 def Chipmunk(indata):
+  global fx
   fx = (AudioEffectsChain()
           .pitch(shift=1000, segment=82, search=14.68, overlap=12)
        )

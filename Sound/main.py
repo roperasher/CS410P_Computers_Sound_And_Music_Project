@@ -57,9 +57,10 @@ def select_item(event):
         pass
 
 def remove_item():
-    globals.profiles.remove(selected_item[0])
-    clear_text()
-    populate_list()
+    profiles.deleteFx()
+    # globals.profiles.remove(selected_item[0])
+    # clear_text()
+    # populate_list()
 
 def update_item():
     # db.update(selected_item[0], part_text.get(), customer_text.get(),
