@@ -10,7 +10,7 @@ def getModifiedSound(vocalProfile):
       if type(value) is types.FunctionType:
         funcs.append(value)
   for fun in funcs:
-    if globals.profiles[vocalProfile-1][3] == str(fun).split(' ')[1]:
+    if globals.profiles[vocalProfile-1][2] == str(fun).split(' ')[1]:
       audio = threading.Thread(target=fun, args=())
       audio.start()
 
