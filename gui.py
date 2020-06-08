@@ -148,17 +148,17 @@ def killAudioThread():
 
 # arg1 text
 arg1_text = StringVar()
-arg1_label = Label(window, text='Level (1-10):', font=('bold', 14), pady=20, padx=20)
-arg1_label.grid(row=0, column=0, sticky=W)
+arg1_label = Label(window, text='Level (1-10):', font=('bold', 14), padx=20)
+arg1_label.grid(row=1, column=0, sticky=W)
 arg1_entry = Entry(window, textvariable=arg1_text)
-arg1_entry.grid(row=0, column=1)
+arg1_entry.grid(row=1, column=1)
 
 # name text
 name_text = StringVar()
 name_label = Label(window, text='Effect Name:', font=('bold', 14),padx=20)
-name_label.grid(row=1, column=0, sticky=W)
+name_label.grid(row=1, column=2, sticky=W)
 name_entry = Entry(window, textvariable=name_text)
-name_entry.grid(row=1, column=1)
+name_entry.grid(row=1, column=3)
 
 # Effects List
 effects_list = Listbox(window, height=8, width=40, border=0)
@@ -183,6 +183,10 @@ mic_list.bind('<<ListboxSelect>>', select_mic)
 speaker_list.bind('<<ListboxSelect>>', select_speaker)
 
 # Labels 
+create_label = Label(window, text='Create Profile:', font=('bold', 14), padx=20, pady=20)
+create_label.grid(row=0, column=0, sticky=W)
+title_label = Label(window, text='Vocal Boss', font=('bold', 14), padx=20, pady=20)
+title_label.grid(row=0, column=5, sticky=W)
 effect_label = Label(window, text='Effects', font=('bold', 14), padx=20)
 effect_label.grid(row=3, column=0, sticky=W)
 mic_label = Label(window, text='Microphone:', font=('bold', 14))
