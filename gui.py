@@ -65,8 +65,6 @@ def select_item(event):
         arg1_entry.insert(END, globals.profiles[index][0])
         arg2_entry.delete(0, END)
         arg2_entry.insert(END, globals.profiles[index][1])
-        name_entry.delete(0, END)
-        name_entry.insert(END, selected_item)
 
         restart_stream()
     except IndexError:
@@ -119,7 +117,8 @@ def toggle_stream():
         globals.running = True
         profiles.getModifiedSound(globals.vocalProfile)
     else:
-        breakout()
+        killAudioThread()
+        globals.running = False
 
 def restart_stream():
     #global globals.running
@@ -127,19 +126,16 @@ def restart_stream():
         toggle_stream()
         toggle_stream()
 
-def breakout():
-    print("in breakout")
+def killAudioThread():
     for proc in psutil.process_iter():
         try:
             # Check if process name contains the given name string.
             if "sox" in proc.name().lower():
                 print("proc: ", proc.pid)
                 os.kill(proc.pid, 9)
-                globals.running = False
                 return print("Killed process with PID: ", proc.pid) 
         except(psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    globals.running = False
     return print("No process with cmd that begins with 'sox'")
 
 # arg1 text
@@ -148,12 +144,6 @@ arg1_label = Label(window, text='Level (1-10):', font=('bold', 14), pady=20, pad
 arg1_label.grid(row=0, column=0, sticky=W)
 arg1_entry = Entry(window, textvariable=arg1_text)
 arg1_entry.grid(row=0, column=1)
-# arg2 text
-arg2_text = StringVar()
-arg2_label = Label(window, text='Other variable:', font=('bold', 14),padx=20)
-arg2_label.grid(row=0, column=2, sticky=W)
-arg2_entry = Entry(window, textvariable=arg2_text)
-arg2_entry.grid(row=0, column=3)
 
 # name text
 name_text = StringVar()
