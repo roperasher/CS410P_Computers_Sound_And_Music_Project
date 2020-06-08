@@ -109,7 +109,6 @@ def getFunctions(module):
 
 def clear_text():
     arg1_entry.delete(0, END)
-    arg2_entry.delete(0, END)
     name_entry.delete(0, END)
 
 def toggle_stream():
