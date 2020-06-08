@@ -135,6 +135,7 @@ def restart_stream():
         toggle_stream()
         toggle_stream()
 
+# kills running sox process if there is one
 def killAudioThread():
     for proc in psutil.process_iter():
         try:
